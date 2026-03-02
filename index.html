@@ -11063,14 +11063,57 @@
             }
         };
 
-        async function renderStrokes(text, id) {
-            const container = document.getElementById('s-container'); container.innerHTML = '';
-            const kanjiChars = text.split('').filter(c => c.match(/[\u4e00-\u9faf]/));
+                async function renderStrokes(text, id) {
+            const container = document.getElementById("s-container"); 
+            container.innerHTML = "";
+            if (!text) return;
+            
+            const chars = text.split("");
             const writers = [];
-            for (let i = 0; i < kanjiChars.length; i++) {
-                const char = kanjiChars[i];
-                const d = document.createElement('div'); d.id = 's-'+i; d.style.width = '100px'; d.style.height = '100px'; container.appendChild(d);
-                const w = HanziWriter.create(d.id, char, { width: 100, height: 100, padding: 5, strokeAnimationSpeed: 1.5, charDataLoader: (c, cb) => fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${c}.json`).then(r => r.json()).then(cb).catch(() => cb(null)) });
+            
+            for (let i = 0; i < chars.length; i++) {
+                const char = chars[i];
+                const d = document.createElement("div");
+                d.id = `s-${i}-${id}`; // Unique ID to prevent overlaps
+                d.style.width = "100px";
+                d.style.height = "100px";
+                d.style.display = "flex";
+                d.style.alignItems = "center";
+                d.style.justifyContent = "center";
+                d.style.fontSize = "3.5rem";
+                d.style.color = "#1e293b";
+                container.appendChild(d);
+                
+                // If it is a Kanji (CJK Unified Ideographs), attempt animation
+                if (char.match(/[\u3400-\u9fff]/)) {
+                    const w = HanziWriter.create(d.id, char, {
+                        width: 100, height: 100, padding: 5,
+                        strokeAnimationSpeed: 1.5,
+                        showCharacter: false,
+                        charDataLoader: (c, cb) => {
+                            fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${c}.json`)
+                                .then(r => r.ok ? r.json() : Promise.reject())
+                                .then(data => cb(data))
+                                .catch(() => {
+                                    d.innerText = char; // Fallback: show as text if data missing
+                                    cb(null);
+                                });
+                        }
+                    });
+                    writers.push(w);
+                } else {
+                    d.innerText = char; // Show Kana/Symbols as static text
+                }
+            }
+            
+            for (let w of writers) {
+                if (id !== animId) return;
+                try {
+                    await w.showCharacter(); // Ensure it is visible
+                    await w.animateCharacter();
+                } catch(e) { console.warn("Stroke animation failed", e); }
+            }
+        }.json`).then(r => r.json()).then(cb).catch(() => cb(null)) });
                 writers.push(w);
             }
             // Sequential animation
@@ -11186,6 +11229,7 @@
     </script>
 </body>
 </html>
+
 
 
 
