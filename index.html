@@ -11063,7 +11063,7 @@
             }
         };
 
-                async function renderStrokes(text, id) {
+                        async function renderStrokes(text, id) {
             const container = document.getElementById("s-container"); 
             container.innerHTML = "";
             if (!text) return;
@@ -11074,7 +11074,7 @@
             for (let i = 0; i < chars.length; i++) {
                 const char = chars[i];
                 const d = document.createElement("div");
-                d.id = `s-${i}-${id}`; // Unique ID to prevent overlaps
+                d.id = `s-${i}-${id}`; 
                 d.style.width = "100px";
                 d.style.height = "100px";
                 d.style.display = "flex";
@@ -11084,7 +11084,6 @@
                 d.style.color = "#1e293b";
                 container.appendChild(d);
                 
-                // If it is a Kanji (CJK Unified Ideographs), attempt animation
                 if (char.match(/[\u3400-\u9fff]/)) {
                     const w = HanziWriter.create(d.id, char, {
                         width: 100, height: 100, padding: 5,
@@ -11095,31 +11094,23 @@
                                 .then(r => r.ok ? r.json() : Promise.reject())
                                 .then(data => cb(data))
                                 .catch(() => {
-                                    d.innerText = char; // Fallback: show as text if data missing
+                                    d.innerText = char; 
                                     cb(null);
                                 });
                         }
                     });
                     writers.push(w);
                 } else {
-                    d.innerText = char; // Show Kana/Symbols as static text
+                    d.innerText = char; 
                 }
             }
             
             for (let w of writers) {
                 if (id !== animId) return;
                 try {
-                    await w.showCharacter(); // Ensure it is visible
+                    await w.showCharacter(); 
                     await w.animateCharacter();
                 } catch(e) { console.warn("Stroke animation failed", e); }
-            }
-        }.json`).then(r => r.json()).then(cb).catch(() => cb(null)) });
-                writers.push(w);
-            }
-            // Sequential animation
-            for (let w of writers) {
-                if (id !== animId) return;
-                await w.animateCharacter();
             }
         }
 
@@ -11168,29 +11159,29 @@
             });
         }
 
-        let recognition = null; document.getElementById('r-content').classList.remove('speaking-mode');
+        let recognition = null; 
         let speakingIdx = 0;
         function startSpeaking() {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("Speech recognition not supported in this browser. Please use Chrome or Edge.");
+            if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+                alert("Speech recognition not supported in this browser. Please use Chrome or Edge.");    
                 return;
             }
-            const btn = document.getElementById('speak-btn');
+            const btn = document.getElementById("speak-btn");
             if (recognition) { recognition.stop(); return; }
 
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRec();
-            recognition.lang = 'ja-JP';
+            recognition.lang = "ja-JP";
             recognition.continuous = true;
             recognition.interimResults = true;
 
-            const segments = document.querySelectorAll('.story-segment');
+            const segments = document.querySelectorAll(".story-segment");
             speakingIdx = 0;
-            segments.forEach(s => { s.classList.remove('done', 'active'); });
-            if (segments[0]) segments[0].classList.add('active');
+            segments.forEach(s => { s.classList.remove("done", "active"); });
+            if (segments[0]) segments[0].classList.add("active");
 
-            btn.classList.add('speaking-active'); document.getElementById('r-content').classList.add('speaking-mode');
-            btn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+            btn.classList.add("speaking-active"); document.getElementById("r-content").classList.add("speaking-mode");
+            btn.innerHTML = "<i class=\"fas fa-stop\"></i> Stop";
 
             recognition.onresult = (event) => {
                 let transcript = "";
@@ -11199,49 +11190,32 @@
                 }
                 const cleanTranscript = transcript.replace(/[、。！？\s]/g, "");
                 while (speakingIdx < segments.length) {
-                    const target = segments[speakingIdx].getAttribute('data-text').replace(/[、。！？\s]/g, "");
+                    const target = segments[speakingIdx].getAttribute("data-text").replace(/[、。！？\s]/g, "");
                     if (cleanTranscript.includes(target)) {
-                        segments[speakingIdx].classList.remove('active');
-                        segments[speakingIdx].classList.add('done');
+                        segments[speakingIdx].classList.remove("active");
+                        segments[speakingIdx].classList.add("done");
                         speakingIdx++;
-                        if (speakingIdx < segments.length) segments[speakingIdx].classList.add('active');
+                        if (speakingIdx < segments.length) segments[speakingIdx].classList.add("active"); 
                     } else break;
                 }
             };
 
             recognition.onend = () => {
-                recognition = null; document.getElementById('r-content').classList.remove('speaking-mode');
-                btn.classList.remove('speaking-active');
-                btn.innerHTML = '<i class="fas fa-microphone"></i> Speak';
-                // segments.forEach(s => s.classList.remove('active'));
+                recognition = null; document.getElementById("r-content").classList.remove("speaking-mode");
+                btn.classList.remove("speaking-active");
+                btn.innerHTML = "<i class=\"fas fa-microphone\"></i> Speak";
             };
 
             recognition.onerror = () => { recognition.stop(); };
             recognition.start();
         }
 
-        function speakText(t) { const u = new SpeechSynthesisUtterance(t.replace(/<rt>.*?<\/rt>/g, "").replace(/<ruby>|<\/ruby>/g, "")); u.lang = 'ja-JP'; window.speechSynthesis.speak(u); }
-        function speakK(e) { e.stopPropagation(); speakText(document.getElementById('k-sentence').innerHTML); }
-        function speakReading() { speakText(document.getElementById('r-content').innerHTML); }
+        function speakText(t) { const u = new SpeechSynthesisUtterance(t.replace(/<rt>.*?<\/rt>/g, "").replace(/<ruby>|<\/ruby>/g, "")); u.lang = "ja-JP"; window.speechSynthesis.speak(u); }
+        function speakK(e) { e.stopPropagation(); speakText(document.getElementById("k-sentence").innerHTML); }
+        function speakReading() { speakText(document.getElementById("r-content").innerHTML); }
         function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} }
-        
-        window.onload = () => { console.log('Starting app...'); try { categorize(); console.log('Categorized'); const keys = Object.keys(lessons); console.log('Lessons:', keys); const firstLesson = keys[0] || 'Environment'; switchMode(firstLesson, 'kanji'); console.log('Switched mode'); } catch(e) { console.error('Error during init:', e); } };
+
+        window.onload = () => { categorize(); const firstLesson = Object.keys(lessons)[0] || "Environment"; switchMode(firstLesson, "kanji"); };
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
