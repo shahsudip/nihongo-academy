@@ -11180,10 +11180,11 @@
         function speakReading() { speakText(document.getElementById('r-content').innerHTML); }
         function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} }
         
-        categorize(); switchMode("Environment", "kanji");
+        window.onload = () => { categorize(); switchMode("Environment", "kanji"); };
     </script>
 </body>
 </html>
+
 
 
 
