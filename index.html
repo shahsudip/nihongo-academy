@@ -10906,7 +10906,7 @@
 ;        const allVocab = allVocabData;
         let lessons = {}; let curLesson = ""; let curMode = "kanji";
         let kQueue = []; let kIdx = 0; let streak = 0; let animId = 0;
-        let mastered = new Set(JSON.parse(localStorage.getItem('n3_mastered') || '[]'));
+        let mastered; try { mastered = new Set(JSON.parse(localStorage.getItem('n3_mastered') || '[]')); } catch(e) { mastered = new Set(); }
         let qIdx = 0, qScore = 0, qList = [];
 
                 const n3GrammarLibrary = {
@@ -11241,13 +11241,20 @@
                 btn.innerHTML = "<i class=\"fas fa-microphone\"></i> Speak";
             };
 
-            recognition.onerror = () => { recognition.stop(); };
+            recognition.onerror = () => { recognition.stop(); btn.classList.remove("speaking-active"); btn.innerHTML = "<i class=\"fas fa-microphone\"></i> Speak"; };
             recognition.start();
         }
 
         function speakText(t) { const u = new SpeechSynthesisUtterance(t.replace(/<rt>.*?<\/rt>/g, "").replace(/<ruby>|<\/ruby>/g, "")); u.lang = "ja-JP"; window.speechSynthesis.speak(u); }
         function speakK(e) { e.stopPropagation(); speakText(document.getElementById("k-sentence").innerHTML); }
         function speakReading() { speakText(document.getElementById("r-content").innerHTML); }
+                window.addEventListener("keydown", (e) => {
+            if (curMode !== "kanji") return;
+            if (e.code === "Space") { e.preventDefault(); document.getElementById("flashcard").click(); }
+            if (e.code === "ArrowRight") nextK(true);
+            if (e.code === "ArrowLeft") nextK(false);
+        });
+
         function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} }
 
         window.onload = () => { categorize(); const firstLesson = Object.keys(lessons)[0] || "Environment"; switchMode(firstLesson, "kanji"); };
