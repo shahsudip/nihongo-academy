@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">`n    <title>Nihongo Academy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nihongo Academy</title>
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -10969,7 +10970,8 @@
                 const group = document.createElement('div'); group.className = "lesson-group";
                 group.innerHTML = `<div class="lesson-title">${name}</div>`;
                 ["kanji", "reading", "quiz"].forEach(m => {
-                    const btn = document.createElement('div'); btn.className = `nav-item ${curLesson === name && curMode === m ? 'active' : ''}`;
+                    const btn = document.createElement('div'); btn.className = 
+av-item ${curLesson === name && curMode === m ? 'active' : ''}`;
                     const icons = { kanji: 'clone', reading: 'book-open', quiz: 'tasks' };
                     btn.innerHTML = `<i class="fas fa-${icons[m]}"></i> ${m.charAt(0).toUpperCase() + m.slice(1)}`;
                     btn.onclick = () => switchMode(name, m); group.appendChild(btn);
@@ -11185,6 +11187,7 @@
     </script>
 </body>
 </html>
+
 
 
 
