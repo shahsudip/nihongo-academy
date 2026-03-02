@@ -218,22 +218,27 @@
         let mastered = new Set();
         let qIdx = 0, qScore = 0, qList = [];
 
-                const grammars = [
+                        const grammars = [
             { jp: "{w}を<ruby>知<rt>し</rt></ruby>っていますか？", en: "Do you know about {m}?", tags: ["noun", "general"] },
-            { jp: "{w}を<ruby>見<rt>み</rt></ruby>たことが、あります。", en: "I have seen {m} before.", tags: ["noun", "place", "object"] },
+            { jp: "{w}を<ruby>見<rt>み</rt></ruby>たことが、あります。", en: "I have seen {m} before.", tags: ["place", "object", "noun"] },
             { jp: "{w}はとても<ruby>大切<rt>たいせつ</rt></ruby>かもしれません。", en: "{m} might be very important.", tags: ["noun", "abstract"] },
-            { jp: "{w}について<ruby>教<rt>おし</rt></ruby>えてください。", en: "Please tell me about {m}.", tags: ["noun", "general"] },
-            { jp: "<ruby>最近<rt>さいきん</rt></ruby>、{w}に<ruby>興味<rt>きょうみ</rt></ruby>があります。", en: "Recently, I am interested in {m}.", tags: ["noun", "abstract", "activity"] },
-            { jp: "{w}を<ruby>練習<rt>れんしゅう</rt></ruby>しなければなりません。", en: "I must practice {m}.", tags: ["activity", "verb"] },
-            { jp: "{w}は<ruby>簡単<rt>かんたん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>われています。", en: "It is thought that {m} is easy.", tags: ["abstract", "activity"] },
-            { jp: "ここには{w}が<ruby>沢山<rt>たくさん</rt></ruby>あります。", en: "There are many {m} here.", tags: ["noun", "object"] },
-            { jp: "{w}を<ruby>使<rt>つか</rt></ruby>ってもいいですか？", en: "May I use {m}?", tags: ["object", "tool"] },
-            { jp: "<ruby>昨日<rt>きのう</rt></ruby>、{w}を<ruby>買<rt>か</rt></ruby>いました。", en: "I bought {m} yesterday.", tags: ["object", "noun"] },
-            { jp: "{w}に<ruby>行<rt>い</rt></ruby>きたいです。", en: "I want to go to {m}.", tags: ["place"] },
+            { jp: "{w}について<ruby>教<rt>おし</rt></ruby>えてください。", en: "Please tell me about {m}.", tags: ["noun", "abstract"] },
             { jp: "{w}はどこにありますか？", en: "Where is the {m}?", tags: ["place", "object"] },
-            { jp: "{w}を<ruby>忘<rt>わす</rt></ruby>れないでください。", en: "Please do not forget {m}.", tags: ["abstract", "object", "activity"] },
-            { jp: "{w}を<ruby>探<rt>さが</rt></ruby>しています。", en: "I am looking for {m}.", tags: ["object", "person", "place"] },
-            { jp: "{w}が<ruby>好<rt>す</rt></ruby>きです。", en: "I like {m}.", tags: ["general"] }
+            { jp: "{w}に<ruby>興味<rt>きょうみ</rt></ruby>があります。", en: "I am interested in {m}.", tags: ["activity", "noun", "abstract"] },
+            { jp: "ここには{w}が<ruby>沢山<rt>たくさん</rt></ruby>あります。", en: "There are many {m} here.", tags: ["noun", "object", "person"] },
+            { jp: "{w}を<ruby>練習<rt>れんしゅう</rt></ruby>しなければなりません。", en: "I must practice {m}.", tags: ["activity", "verb"] },
+            { jp: "{w}を<ruby>続<rt>つづ</rt></ruby>けるのは、<ruby>大変<rt>たいへん</rt></ruby>です。", en: "Continuing {m} is difficult.", tags: ["activity", "verb"] },
+            { jp: "{w}に<ruby>行<rt>い</rt></ruby>きたいと、<ruby>思<rt>おも</rt></ruby>っています。", en: "I want to go to {m}.", tags: ["place"] },
+            { jp: "<ruby>昨日<rt>きのう</rt></ruby>、{w}を<ruby>買<rt>か</rt></ruby>いました。", en: "I bought {m} yesterday.", tags: ["object"] },
+            { jp: "{w}は、あまり<ruby>好<rt>す</rt></ruby>きじゃありません。", en: "I don`t like {m} very much.", tags: ["noun", "abstract"] },
+            { jp: "{w}を<ruby>始<rt>はじ</rt></ruby>めても、いいですか？", en: "May I start {m}?", tags: ["activity", "verb"] },
+            { jp: "この{w}は、とても<ruby>有名<rt>ゆうめい</rt></ruby>ですね。", en: "This {m} is very famous, isn`t it?", tags: ["noun", "place", "object"] },
+            { jp: "{w}は、とても<ruby>便利<rt>べんり</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>います。", en: "I think {m} is very convenient.", tags: ["object", "tool"] },
+            { jp: "<ruby>今日<rt>きょう</rt></ruby>は{w}に<ruby>注意<rt>ちゅうい</rt></ruby>してください。", en: "Please be careful about {m} today.", tags: ["abstract", "general"] },
+            { jp: "{w}が<ruby>好<rt>す</rt></ruby>きだと<ruby>聞<rt>き</rt></ruby>きました。", en: "I heard that you like {m}.", tags: ["noun", "general"] },
+            { jp: "{w}について、どう<ruby>思<rt>おも</rt></ruby>いますか？", en: "What do you think about {m}?", tags: ["noun", "abstract"] },
+            { jp: "{w}があれば、<ruby>安心<rt>あんしん</rt></ruby>です。", en: "If I have {m}, I feel safe.", tags: ["object", "tool", "person"] },
+            { jp: "{w}に<ruby>挑戦<rt>ちょうせん</rt></ruby>してみたいです。", en: "I want to try to challenge {m}.", tags: ["activity", "verb", "abstract"] }
         ];
 
         function changeLevel(level) {
@@ -271,23 +276,23 @@
                         lessons[c].push({...it, id: idx}); assigned = true; break;
                     }
                 }
-                if (!assigned) { 
-                    if (!lessons.Miscellaneous) lessons.Miscellaneous = []; 
-                    lessons.Miscellaneous.push({...it, id: idx}); 
+                if (!assigned) {
+                    if (!lessons.Miscellaneous) lessons.Miscellaneous = [];
+                    lessons.Miscellaneous.push({...it, id: idx});
                 }
             });
             renderSidebar();
         }
 
         function renderSidebar() {
-            const nav = document.getElementById('lesson-nav'); nav.innerHTML = "";
+            const nav = document.getElementById("lesson-nav"); nav.innerHTML = "";
             const keys = Object.keys(lessons).filter(k => k !== "Miscellaneous"); if (lessons.Miscellaneous) keys.push("Miscellaneous");
             keys.forEach(name => {
-                const group = document.createElement('div'); group.className = "lesson-group";
+                const group = document.createElement("div"); group.className = "lesson-group";
                 group.innerHTML = `<div class="lesson-title">${name}</div>`;
                 ["kanji", "reading", "quiz"].forEach(m => {
-                    const btn = document.createElement('div'); btn.className = `nav-item ${curLesson === name && curMode === m ? 'active' : ''}`;
-                    const icons = { kanji: 'clone', reading: 'book-open', quiz: 'tasks' };
+                    const btn = document.createElement("div"); btn.className = `nav-item ${curLesson === name && curMode === m ? "active" : ""}`;
+                    const icons = { kanji: "clone", reading: "book-open", quiz: "tasks" };
                     btn.innerHTML = `<i class="fas fa-${icons[m]}"></i> ${m.charAt(0).toUpperCase() + m.slice(1)}`;
                     btn.onclick = () => switchMode(name, m); group.appendChild(btn);
                 });
@@ -296,61 +301,71 @@
         }
 
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
             const isMobile = window.innerWidth <= 850;
             if (isMobile) {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('show');
-                document.getElementById('close-sidebar-btn').style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+                sidebar.classList.toggle("open");
+                overlay.classList.toggle("show");
+                document.getElementById("close-sidebar-btn").style.display = sidebar.classList.contains("open") ? "block" : "none";
             }
         }
 
         function switchMode(lesson, mode) {
             curLesson = lesson; curMode = mode;
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            document.getElementById('view-' + mode).classList.add('active-view');
-            if (mode === 'kanji') initKanji(); else if (mode === 'reading') initReading(); else initQuiz();
+            document.querySelectorAll(".view-section").forEach(v => v.classList.remove("active-view"));   
+            document.getElementById("view-" + mode).classList.add("active-view");
+            if (mode === "kanji") initKanji(); else if (mode === "reading") initReading(); else initQuiz();
             renderSidebar();
             if (window.innerWidth <= 850) {
-                document.getElementById('sidebar').classList.remove('open');
-                document.getElementById('sidebar-overlay').classList.remove('show');
-                document.getElementById('close-sidebar-btn').style.display = 'none';
+                document.getElementById("sidebar").classList.remove("open");
+                document.getElementById("sidebar-overlay").classList.remove("show");
+                document.getElementById("close-sidebar-btn").style.display = "none";
             }
         }
 
         function initKanji() {
+            if (!lessons[curLesson]) return;
             kQueue = lessons[curLesson].filter(it => !mastered.has(it.id));
             if (kQueue.length === 0) kQueue = [...lessons[curLesson]];
             shuffle(kQueue); kIdx = 0; updateK();
         }
 
-        function updateK() {
-            const it = kQueue[kIdx]; const kanji = it.kanji || it.kana;
-            document.getElementById('k-text').innerText = kanji;
-            document.getElementById('k-kana').innerText = it.kana;
-            document.getElementById('k-eng').innerText = it.english;
-            document.getElementById('k-left').innerText = kQueue.length - kIdx;
-            const mInL = lessons[curLesson].filter(i => mastered.has(i.id)).length;
-            document.getElementById('k-done').innerText = mInL;
-            document.getElementById('k-streak').innerText = streak;
-            document.getElementById('progress-inner').style.width = (mInL / lessons[curLesson].length * 100) + "%";
-            document.getElementById('flashcard').classList.remove('is-flipped');
-            document.getElementById('k-meaning').style.display = 'none';
-            document.getElementById('k-sentence').classList.remove('show-furigana');
-                        const eng = it.english.toLowerCase();
+        function getBestPattern(it) {
+            const eng = it.english.toLowerCase();
+            const kana = it.kana;
             let tags = ["general"];
-            if (eng.includes("place") || eng.includes("room") || eng.includes("city") || eng.includes("town") || eng.includes("hospital") || eng.includes("school")) tags.push("place");
-            if (eng.includes("to ") || eng.includes("ing ")) tags.push("activity", "verb");
-            if (eng.includes("book") || eng.includes("tool") || eng.includes("car") || eng.includes("phone") || eng.includes("food")) tags.push("object");
+            if (eng.includes("place") || eng.includes("room") || eng.includes("city") || eng.includes("town") || eng.includes("building") || eng.includes("station") || eng.includes("park")) tags.push("place");
+            if (eng.startsWith("to ") || eng.includes("ing ") || kana.endsWith("る") || kana.endsWith("う") || kana.endsWith("す") || kana.endsWith("く") || kana.endsWith("む") || kana.endsWith("つ") || kana.endsWith("ぬ") || kana.endsWith("ぶ") || kana.endsWith("ぐ")) tags.push("activity", "verb");
+            if (eng.includes("book") || eng.includes("tool") || eng.includes("car") || eng.includes("phone") || eng.includes("food") || eng.includes("item") || eng.includes("clothes") || eng.includes("machine")) tags.push("object");
+            if (eng.includes("person") || eng.includes("man") || eng.includes("woman") || eng.includes("doctor") || eng.includes("teacher") || eng.includes("friend")) tags.push("person");
+            if (eng.includes("feeling") || eng.includes("mind") || eng.includes("rule") || eng.includes("policy") || eng.includes("idea") || eng.includes("theory") || eng.includes("society")) tags.push("abstract");
+            if (kana.endsWith("い") || eng.includes("ly")) tags.push("abstract");
             
             const validPatterns = grammars.filter(p => p.tags.some(t => tags.includes(t)));
-            const pattern = validPatterns[Math.floor(Math.random() * validPatterns.length)];
-            document.getElementById('k-sentence').innerHTML = pattern.jp.replace('{w}', `<ruby>${kanji}<rt>${it.kana}</rt></ruby>`);
-            document.getElementById('k-meaning').innerText = pattern.en.replace('{m}', it.english);
-            const keyword = encodeURIComponent(it.english.split(',')[0].trim());
-            document.body.style.backgroundImage = `url('https://image.pollinations.ai/prompt/cinematic%20minimalist%20${keyword}?width=1920&height=1080&nologo=true')`;
-            animId++; renderStrokes(kanji, animId); 
+            return validPatterns.length > 0 ? validPatterns[Math.floor(Math.random() * validPatterns.length)] : grammars[0];
+        }
+
+        function updateK() {
+            const it = kQueue[kIdx]; const kanji = it.kanji || it.kana;
+            document.getElementById("k-text").innerText = kanji;
+            document.getElementById("k-kana").innerText = it.kana;
+            document.getElementById("k-eng").innerText = it.english;
+            document.getElementById("k-left").innerText = kQueue.length - kIdx;
+            const mInL = lessons[curLesson].filter(i => mastered.has(i.id)).length;
+            document.getElementById("k-done").innerText = mInL;
+            document.getElementById("k-streak").innerText = streak;
+            document.getElementById("progress-inner").style.width = (mInL / lessons[curLesson].length * 100) + "%";
+            document.getElementById("flashcard").classList.remove("is-flipped");
+            document.getElementById("k-meaning").style.display = "none";
+            document.getElementById("k-sentence").classList.remove("show-furigana");
+            
+            const pattern = getBestPattern(it);
+            document.getElementById("k-sentence").innerHTML = pattern.jp.replace("{w}", `<ruby>${kanji}<rt>${it.kana}</rt></ruby>`);
+            document.getElementById("k-meaning").innerText = pattern.en.replace("{m}", it.english);       
+            const keyword = encodeURIComponent(it.english.split(",")[0].trim());
+            document.body.style.backgroundImage = `url("https://image.pollinations.ai/prompt/cinematic%20minimalist%20${keyword}?width=1920&height=1080&nologo=true")`;
+            animId++; renderStrokes(kanji, animId);
         }
 
         function nextK(done) {
@@ -361,25 +376,44 @@
             updateK();
         }
 
-        function toggleKMeaning(e) { 
-            e.stopPropagation(); 
-            const m = document.getElementById('k-meaning'); 
-            const s = document.getElementById('k-sentence');
-            const isHidden = m.style.display === 'none';
-            m.style.display = isHidden ? 'block' : 'none';
-            if (isHidden) s.classList.add('show-furigana'); else s.classList.remove('show-furigana');
+        function toggleKMeaning(e) {
+            e.stopPropagation();
+            const m = document.getElementById("k-meaning");
+            const s = document.getElementById("k-sentence");
+            const isHidden = m.style.display === "none";
+            m.style.display = isHidden ? "block" : "none";
+            if (isHidden) s.classList.add("show-furigana"); else s.classList.remove("show-furigana");     
         }
 
-        document.getElementById('flashcard').onclick = () => {
-            const card = document.getElementById('flashcard');
-            card.classList.toggle('is-flipped');
-            if (!card.classList.contains('is-flipped')) { 
-                document.getElementById('k-meaning').style.display = 'none';
-                document.getElementById('k-sentence').classList.remove('show-furigana');
-                animId++; renderStrokes(kQueue[kIdx].kanji || kQueue[kIdx].kana, animId); 
+        document.getElementById("flashcard").onclick = () => {
+            const card = document.getElementById("flashcard");
+            card.classList.toggle("is-flipped");
+            if (!card.classList.contains("is-flipped")) {
+                document.getElementById("k-meaning").style.display = "none";
+                document.getElementById("k-sentence").classList.remove("show-furigana");
+                animId++; renderStrokes(kQueue[kIdx].kanji || kQueue[kIdx].kana, animId);
             }
         };
 
+        function initReading() {
+            if (!lessons[curLesson]) return; const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
+            let storyHtml = "", translation = "";
+            const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
+            words.forEach((w, i) => {
+                const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";        
+                const pattern = getBestPattern(w);
+                const segmentHtml = conn + pattern.jp.replace("{w}", `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
+                const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");    
+                storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
+                translation += conn + pattern.en.replace("{m}", w.english) + " ";
+            });
+            document.getElementById("r-content").innerHTML = storyHtml;
+            document.getElementById("r-translation").innerText = translation;
+            document.getElementById("rq-options").innerHTML = "";
+            const q = document.createElement("button"); q.className="option-btn"; q.innerText="Check Content";
+            q.onclick=()=>document.getElementById("r-content").classList.add("show-furigana");
+            document.getElementById("rq-options").appendChild(q);
+        }
         async function renderStrokes(text, id) {
             const container = document.getElementById('s-container'); container.innerHTML = '';
             const kanjiChars = text.split('').filter(c => c.match(/[\u4e00-\u9faf]/));
@@ -396,28 +430,6 @@
             }
         }
 
-        function initReading() {
-            if (!lessons[curLesson]) return; const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
-            let storyHtml = "", translation = "";
-            const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
-            words.forEach((w, i) => {
-                const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";
-                            const eng = it.english.toLowerCase();
-            let tags = ["general"];
-            if (eng.includes("place") || eng.includes("room") || eng.includes("city") || eng.includes("town") || eng.includes("hospital") || eng.includes("school")) tags.push("place");
-            if (eng.includes("to ") || eng.includes("ing ")) tags.push("activity", "verb");
-            if (eng.includes("book") || eng.includes("tool") || eng.includes("car") || eng.includes("phone") || eng.includes("food")) tags.push("object");
-            
-            const validPatterns = grammars.filter(p => p.tags.some(t => tags.includes(t)));
-            const pattern = validPatterns[Math.floor(Math.random() * validPatterns.length)];
-                const segmentHtml = conn + pattern.jp.replace('{w}', `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
-                const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");
-                storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
-                translation += conn + pattern.en.replace('{m}', w.english) + " ";
-            });
-            document.getElementById('r-content').innerHTML = storyHtml;
-            document.getElementById('r-translation').innerText = translation;
-            document.getElementById('rq-options').innerHTML = "";
             const q = document.createElement('button'); q.className="option-btn"; q.innerText="Check Content"; 
             q.onclick=()=>document.getElementById('r-content').classList.add('show-furigana');
             document.getElementById('rq-options').appendChild(q);
@@ -474,6 +486,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
