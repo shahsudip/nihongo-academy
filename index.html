@@ -98,7 +98,8 @@
             .story-text { font-size: 1.15rem; padding: 15px; line-height: 2; }
             }
 
-            .story-segment { color: #cbd5e1; transition: color 0.3s; }
+            .story-segment { color: #1e293b; transition: color 0.3s; }
+            .speaking-mode .story-segment { color: #cbd5e1; }
             .story-segment.active { color: #1e293b; font-weight: bold; }
             .story-segment.done { color: #1e293b; }
             .speaking-active { background: #fee2e2 !important; border-color: #ef4444 !important; color: #ef4444 !important; }
@@ -11101,7 +11102,7 @@
             });
         }
 
-        let recognition = null;
+        let recognition = null; document.getElementById('r-content').classList.remove('speaking-mode');
         let speakingIdx = 0;
         function startSpeaking() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -11122,7 +11123,7 @@
             segments.forEach(s => { s.classList.remove('done', 'active'); });
             if (segments[0]) segments[0].classList.add('active');
 
-            btn.classList.add('speaking-active');
+            btn.classList.add('speaking-active'); document.getElementById('r-content').classList.add('speaking-mode');
             btn.innerHTML = '<i class="fas fa-stop"></i> Stop';
 
             recognition.onresult = (event) => {
@@ -11143,7 +11144,7 @@
             };
 
             recognition.onend = () => {
-                recognition = null;
+                recognition = null; document.getElementById('r-content').classList.remove('speaking-mode');
                 btn.classList.remove('speaking-active');
                 btn.innerHTML = '<i class="fas fa-microphone"></i> Speak';
                 segments.forEach(s => s.classList.remove('active'));
@@ -11162,6 +11163,7 @@
     </script>
 </body>
 </html>
+
 
 
 
