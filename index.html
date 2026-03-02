@@ -100,8 +100,8 @@
 
             .story-segment { color: #1e293b; transition: color 0.3s; }
             .speaking-mode .story-segment { color: #cbd5e1; }
-            .story-segment.active { color: #1e293b; font-weight: bold; }
-            .story-segment.done { color: #1e293b; }
+            .story-segment.done, .story-segment.active { color: #1e293b !important; }
+            .story-segment.done, .story-segment.active { color: #1e293b !important; font-weight: bold; }
             .speaking-active { background: #fee2e2 !important; border-color: #ef4444 !important; color: #ef4444 !important; }
 
         @media (max-width: 480px) {
@@ -11147,7 +11147,7 @@
                 recognition = null; document.getElementById('r-content').classList.remove('speaking-mode');
                 btn.classList.remove('speaking-active');
                 btn.innerHTML = '<i class="fas fa-microphone"></i> Speak';
-                segments.forEach(s => s.classList.remove('active'));
+                // segments.forEach(s => s.classList.remove('active'));
             };
 
             recognition.onerror = () => { recognition.stop(); };
@@ -11163,6 +11163,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
