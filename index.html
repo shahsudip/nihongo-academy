@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -21,61 +21,115 @@
         #bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.6)); z-index: -1; }
         
         .sidebar {
-            width: var(--sidebar-width); background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px);
-            border-right: 1px solid var(--glass-border); height: 100vh; overflow-y: auto; display: flex; flex-direction: column; padding: 20px 0; z-index: 100;
+            width: var(--sidebar-width); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border); height: 100vh; overflow-y: auto; display: flex; flex-direction: column; padding: 20px 0; z-index: 1000;
+            transition: transform 0.3s ease;
         }
-        .sidebar-header { padding: 0 20px 15px; font-size: 1.1rem; font-weight: bold; color: var(--primary); border-bottom: 1px solid var(--glass-border); }
+        .sidebar-header { padding: 0 20px 15px; font-size: 1.1rem; font-weight: bold; color: var(--primary); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
         .lesson-group { margin-top: 15px; }
         .lesson-title { padding: 8px 20px; font-size: 0.8rem; font-weight: bold; opacity: 0.5; text-transform: uppercase; }
-        .nav-item { padding: 8px 30px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; transition: 0.2s; }
+        .nav-item { padding: 12px 30px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; transition: 0.2s; }
         .nav-item:hover { background: rgba(255,255,255,0.05); }
         .nav-item.active { background: rgba(99, 102, 241, 0.15); border-left-color: var(--primary); color: var(--primary); font-weight: bold; }
 
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px; overflow-y: auto; }
+        .mobile-header { display: none; width: 100%; padding: 15px 20px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 500; align-items: center; justify-content: space-between; }
+        .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 5px; }
+
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px; overflow-y: auto; height: 100vh; scroll-behavior: smooth; }
         .container { width: 100%; max-width: 650px; }
         .view-section { display: none; width: 100%; }
         .active-view { display: block; }
 
-        .flashcard-scene { width: 100%; height: 520px; perspective: 1500px; margin-bottom: 20px; }
+        .flashcard-scene { width: 100%; height: 500px; perspective: 1500px; margin-bottom: 20px; }
         .flashcard { width: 100%; height: 100%; position: relative; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; cursor: pointer; }
         .flashcard.is-flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: rgba(255, 255, 255, 0.96); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.4); color: #1e293b; }
         .card-back { transform: rotateY(180deg); background: #f8fafc; }
 
-        .kanji-main { font-size: 5rem; font-weight: 800; margin-bottom: 5px; }
-        .kana-main { font-size: 2.8rem; color: var(--primary); font-weight: 600; }
-        .stroke-box-container { display: flex; gap: 15px; margin: 15px 0; background: #fff; padding: 12px; border-radius: 15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .kanji-main { font-size: 5rem; font-weight: 800; margin-bottom: 5px; text-align: center; }
+        .kana-main { font-size: 2.8rem; color: var(--primary); font-weight: 600; text-align: center; }
+        .stroke-box-container { display: flex; gap: 10px; margin: 15px 0; background: #fff; padding: 12px; border-radius: 15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); flex-wrap: wrap; justify-content: center; }
         
         .ui-card { background: rgba(255, 255, 255, 0.96); border-radius: 30px; padding: 35px; color: #1e293b; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .story-text { font-size: 1.4rem; line-height: 2.4; margin-bottom: 25px; text-align: justify; padding: 25px; background: #fff; border-radius: 20px; border: 1px solid #e2e8f0; }
+        .story-text { font-size: 1.3rem; line-height: 2.2; margin-bottom: 25px; text-align: justify; padding: 25px; background: #fff; border-radius: 20px; border: 1px solid #e2e8f0; }
         .story-translation { font-size: 1.05rem; color: #475569; background: #f8fafc; border-radius: 15px; height: 0; overflow: hidden; transition: all 0.5s ease; line-height: 1.6; }
         .story-translation.expanded { height: auto; padding: 20px; margin-top: 15px; border: 1px solid #cbd5e1; }
         
-        .quiz-question { font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; color: #1e293b; border-left: 6px solid var(--primary); padding-left: 15px; }
+        .quiz-question { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; color: #1e293b; border-left: 6px solid var(--primary); padding-left: 15px; }
         .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .option-btn { background: #fff; border: 2px solid #e2e8f0; padding: 18px; border-radius: 18px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 1.1rem; }
+        .option-btn { background: #fff; border: 2px solid #e2e8f0; padding: 15px; border-radius: 18px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 1rem; text-align: left; }
         .option-btn:hover { border-color: var(--primary); background: #f8fafc; transform: translateY(-2px); }
         .option-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
         .option-btn.wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
 
-        .eye-btn { background: none; border: 1.5px solid var(--primary); color: var(--primary); padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.9rem; font-weight: bold; margin: 10px 5px; transition: 0.3s; }
+        .eye-btn { background: none; border: 1.5px solid var(--primary); color: var(--primary); padding: 8px 18px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; font-weight: bold; margin: 10px 5px; transition: 0.3s; }
         .eye-btn:hover { background: var(--primary); color: white; }
         
-        ruby rt { visibility: hidden; color: #ef4444; font-weight: bold; font-size: 0.5em; }
+        ruby rt { visibility: hidden; color: #ef4444; font-weight: bold; font-size: 0.55em; }
         .show-furigana ruby rt { visibility: visible; }
         
-        .stats-row { display: flex; justify-content: space-around; margin-bottom: 25px; background: var(--glass); padding: 18px; border-radius: 25px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); }
-        .stat-val { color: var(--primary); font-weight: bold; font-size: 1.3rem; }
-        .progress-bar { width: 100%; height: 10px; background: var(--glass); border-radius: 5px; margin-top: 25px; overflow: hidden; }
+        .stats-row { display: flex; justify-content: space-around; margin-bottom: 20px; background: var(--glass); padding: 15px; border-radius: 25px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); }
+        .stat-val { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+        .progress-bar { width: 100%; height: 8px; background: var(--glass); border-radius: 4px; margin-top: 25px; overflow: hidden; }
         #progress-inner { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #818cf8); transition: 0.6s; }
         
-        .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 30px; }
-        .action-btn { border: none; padding: 16px; border-radius: 22px; color: white; cursor: pointer; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.3s; }
+        .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 25px; }
+        .action-btn { border: none; padding: 15px; border-radius: 20px; color: white; cursor: pointer; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.3s; font-size: 0.9rem; }
+        .action-btn i { font-size: 1.2rem; }
+        .action-btn:active { transform: scale(0.95); }
+
+        /* Mobile Adjustments */
+        @media (max-width: 850px) {
+            body { flex-direction: column; overflow: auto; height: auto; }
+            .sidebar { position: fixed; left: 0; top: 0; transform: translateX(-100%); width: 280px; box-shadow: 20px 0 50px rgba(0,0,0,0.5); }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-header { display: flex; }
+            .main-content { padding: 20px 15px 80px; height: auto; overflow: visible; }
+            .flashcard-scene { height: 450px; }
+            .kanji-main { font-size: 4rem; }
+            .kana-main { font-size: 2.2rem; }
+            .ui-card { padding: 20px; border-radius: 20px; }
+            .option-grid { grid-template-columns: 1fr; }
+            .actions { grid-template-columns: 1fr 1fr 1fr; }
+            .action-btn { padding: 12px 8px; border-radius: 15px; }
+            .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 900; }
+            .sidebar-overlay.show { display: block; }
+            .card-face { padding: 20px; border-radius: 20px; }
+            .story-text { font-size: 1.15rem; padding: 15px; line-height: 2; }
+            }
+
+            .story-segment { color: #cbd5e1; transition: color 0.3s; }
+            .story-segment.active { color: #1e293b; font-weight: bold; }
+            .story-segment.done { color: #1e293b; }
+            .speaking-active { background: #fee2e2 !important; border-color: #ef4444 !important; color: #ef4444 !important; }
+            </style>
+        @media (max-width: 480px) {
+            .flashcard-scene { height: 400px; }
+            .kanji-main { font-size: 3.2rem; }
+            .kana-main { font-size: 1.8rem; }
+            .actions { gap: 8px; }
+            .action-btn { font-size: 0.8rem; }
+            .stat-val { font-size: 1rem; }
+            .stats-row { padding: 12px; }
+        }
     </style>
 </head>
 <body>
     <div id="bg-overlay"></div>
-    <aside class="sidebar"><div class="sidebar-header"><i class="fas fa-university"></i> N3 Mastery</div><div id="lesson-nav"></div></aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span><i class="fas fa-university"></i> N3 Mastery</span>
+            <button class="menu-btn" onclick="toggleSidebar()" style="font-size: 1.2rem; display: none;" id="close-sidebar-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="lesson-nav"></div>
+    </aside>
+
+    <div class="mobile-header">
+        <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <div style="font-weight: bold; color: var(--primary);">N3 Mastery</div>
+        <div style="width: 30px;"></div>
+    </div>
 
     <main class="main-content">
         <div id="view-kanji" class="view-section container active-view">
@@ -114,6 +168,8 @@
                 <div style="margin-bottom:20px;">
                     <button class="eye-btn" onclick="toggleRFurigana()"><i class="fas fa-language"></i> Furigana</button>
                     <button class="eye-btn" onclick="toggleRMeaning()"><i class="fas fa-eye"></i> English</button>
+                    <button class="eye-btn" onclick="speakReading()"><i class="fas fa-volume-up"></i> Listen</button>
+                    <button class="eye-btn" id="speak-btn" onclick="startSpeaking()"><i class="fas fa-microphone"></i> Speak</button>
                 </div>
                 <div id="r-content" class="story-text"></div>
                 <div id="r-translation" class="story-translation"></div>
@@ -10900,12 +10956,31 @@
             });
         }
 
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const isMobile = window.innerWidth <= 850;
+            
+            if (isMobile) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('show');
+                document.getElementById('close-sidebar-btn').style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+            }
+        }
+
         function switchMode(lesson, mode) {
             curLesson = lesson; curMode = mode;
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             document.getElementById('view-' + mode).classList.add('active-view');
             if (mode === 'kanji') initKanji(); else if (mode === 'reading') initReading(); else initQuiz();
             renderSidebar();
+            
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 850) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebar-overlay').classList.remove('show');
+                document.getElementById('close-sidebar-btn').style.display = 'none';
+            }
         }
 
         function initKanji() {
@@ -10983,15 +11058,17 @@
 
         function initReading() {
             const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
-            let story = "", translation = "";
+            let storyHtml = "", translation = "";
             const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
             words.forEach((w, i) => {
                 const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";
                 const pattern = grammars[Math.floor(Math.random()*grammars.length)];
-                story += conn + pattern.jp.replace('{w}', `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`) + " ";
+                const segmentHtml = conn + pattern.jp.replace('{w}', `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
+                const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");
+                storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
                 translation += conn + pattern.en.replace('{m}', w.english) + " ";
             });
-            document.getElementById('r-content').innerHTML = story;
+            document.getElementById('r-content').innerHTML = storyHtml;
             document.getElementById('r-translation').innerText = translation;
             document.getElementById('r-translation').classList.remove('expanded');
             const qSet = [{ q: "<ruby>文章<rt>ぶんしょう</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby>について、正しいものはどれですか？", a: ["環境の話", "日常の生活", "新しいこと", "家族のこと"] }];
@@ -11024,13 +11101,65 @@
             });
         }
 
+        let recognition = null;
+        let speakingIdx = 0;
+        function startSpeaking() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Speech recognition not supported in this browser. Please use Chrome or Edge.");
+                return;
+            }
+            const btn = document.getElementById('speak-btn');
+            if (recognition) { recognition.stop(); return; }
+
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRec();
+            recognition.lang = 'ja-JP';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            const segments = document.querySelectorAll('.story-segment');
+            speakingIdx = 0;
+            segments.forEach(s => { s.classList.remove('done', 'active'); });
+            if (segments[0]) segments[0].classList.add('active');
+
+            btn.classList.add('speaking-active');
+            btn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+
+            recognition.onresult = (event) => {
+                let transcript = "";
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    transcript += event.results[i][0].transcript;
+                }
+                const cleanTranscript = transcript.replace(/[、。！？\s]/g, "");
+                while (speakingIdx < segments.length) {
+                    const target = segments[speakingIdx].getAttribute('data-text').replace(/[、。！？\s]/g, "");
+                    if (cleanTranscript.includes(target)) {
+                        segments[speakingIdx].classList.remove('active');
+                        segments[speakingIdx].classList.add('done');
+                        speakingIdx++;
+                        if (speakingIdx < segments.length) segments[speakingIdx].classList.add('active');
+                    } else break;
+                }
+            };
+
+            recognition.onend = () => {
+                recognition = null;
+                btn.classList.remove('speaking-active');
+                btn.innerHTML = '<i class="fas fa-microphone"></i> Speak';
+                segments.forEach(s => s.classList.remove('active'));
+            };
+
+            recognition.onerror = () => { recognition.stop(); };
+            recognition.start();
+        }
+
         function speakText(t) { const u = new SpeechSynthesisUtterance(t.replace(/<rt>.*?<\/rt>/g, "").replace(/<ruby>|<\/ruby>/g, "")); u.lang = 'ja-JP'; window.speechSynthesis.speak(u); }
-        function speakK(e) { e.stopPropagation(); speakText(document.getElementById('k-sentence').innerText); }
+        function speakK(e) { e.stopPropagation(); speakText(document.getElementById('k-sentence').innerHTML); }
+        function speakReading() { speakText(document.getElementById('r-content').innerHTML); }
         function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} }
         
-        window.onload = () => { categorize(); switchMode("Environment", "kanji"); };
+        categorize(); switchMode("Environment", "kanji");
     </script>
 </body>
 </html>
-
 
