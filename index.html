@@ -155,7 +155,7 @@
                         <div class="stroke-box-container" id="s-container"></div>
                         <div style="margin-top:20px; width:100%; text-align:center;">
                             <div id="k-sentence" style="font-size:1.5rem; line-height:2.2;"></div>
-                            <button class="eye-btn" onclick="toggleKMeaning(event)"><i class="fas fa-eye"></i> Meaning</button>
+                            <button class="eye-btn" onclick="toggleKMeaning(event)"><i class="fas fa-eye"></i> Meaning</button>`n                            <button class="eye-btn" onclick="shuffleSentence(event)"><i class="fas fa-random"></i> Shuffle Sentence</button>
                             <div id="k-meaning" style="display:none; font-style:italic; color:#64748b; margin-top:12px; font-size:1.1rem;"></div>
                         </div>
                     </div>
@@ -346,6 +346,16 @@
             return validPatterns.length > 0 ? validPatterns[Math.floor(Math.random() * validPatterns.length)] : grammars[0];
         }
 
+        function shuffleSentence(e) {
+            if (e) e.stopPropagation();
+            const it = kQueue[kIdx]; const kanji = it.kanji || it.kana;
+            const pattern = getBestPattern(it);
+            document.getElementById("k-sentence").innerHTML = pattern.jp.replace("{w}", `<ruby>${kanji}<rt>${it.kana}</rt></ruby>`);
+            document.getElementById("k-meaning").innerText = pattern.en.replace("{m}", it.english);
+            document.getElementById("k-meaning").style.display = "block";
+            document.getElementById("k-sentence").classList.add("show-furigana");
+        }
+
         function updateK() {
             const it = kQueue[kIdx]; const kanji = it.kanji || it.kana;
             document.getElementById("k-text").innerText = kanji;
@@ -486,6 +496,9 @@
     </script>
 </body>
 </html>
+
+
+
 
 
 
