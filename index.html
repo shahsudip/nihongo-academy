@@ -218,14 +218,22 @@
         let mastered = new Set();
         let qIdx = 0, qScore = 0, qList = [];
 
-        const grammars = [
-            { jp: '{w}を<ruby>知<rt>し</rt></ruby>っていますか？', en: 'Do you know about {m}?' },
-            { jp: '{w}を<ruby>見<rt>み</rt></ruby>たことが、あります。', en: 'I have seen {m} before.' },
-            { jp: '{w}はとても<ruby>大切<rt>たいせつ</rt></ruby>かもしれません。', en: '{m} might be very important.' },
-            { jp: '{w}について<ruby>教<rt>おし</rt></ruby>えてください。', en: 'Please tell me about {m}.' },
-            { jp: '<ruby>最近<rt>さいきん</rt></ruby>、{w}に<ruby>興味<rt>きょうみ</rt></ruby>があります。', en: 'Recently, I am interested in {m}.' },
-            { jp: '{w}を<ruby>練習<rt>れんしゅう</rt></ruby>しなければなりません。', en: 'I must practice {m}.' },
-            { jp: '{w}は<ruby>簡単<rt>かんたん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>われています。', en: 'It is thought that {m} is easy.' }
+                const grammars = [
+            { jp: "{w}を<ruby>知<rt>し</rt></ruby>っていますか？", en: "Do you know about {m}?", tags: ["noun", "general"] },
+            { jp: "{w}を<ruby>見<rt>み</rt></ruby>たことが、あります。", en: "I have seen {m} before.", tags: ["noun", "place", "object"] },
+            { jp: "{w}はとても<ruby>大切<rt>たいせつ</rt></ruby>かもしれません。", en: "{m} might be very important.", tags: ["noun", "abstract"] },
+            { jp: "{w}について<ruby>教<rt>おし</rt></ruby>えてください。", en: "Please tell me about {m}.", tags: ["noun", "general"] },
+            { jp: "<ruby>最近<rt>さいきん</rt></ruby>、{w}に<ruby>興味<rt>きょうみ</rt></ruby>があります。", en: "Recently, I am interested in {m}.", tags: ["noun", "abstract", "activity"] },
+            { jp: "{w}を<ruby>練習<rt>れんしゅう</rt></ruby>しなければなりません。", en: "I must practice {m}.", tags: ["activity", "verb"] },
+            { jp: "{w}は<ruby>簡単<rt>かんたん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>われています。", en: "It is thought that {m} is easy.", tags: ["abstract", "activity"] },
+            { jp: "ここには{w}が<ruby>沢山<rt>たくさん</rt></ruby>あります。", en: "There are many {m} here.", tags: ["noun", "object"] },
+            { jp: "{w}を<ruby>使<rt>つか</rt></ruby>ってもいいですか？", en: "May I use {m}?", tags: ["object", "tool"] },
+            { jp: "<ruby>昨日<rt>きのう</rt></ruby>、{w}を<ruby>買<rt>か</rt></ruby>いました。", en: "I bought {m} yesterday.", tags: ["object", "noun"] },
+            { jp: "{w}に<ruby>行<rt>い</rt></ruby>きたいです。", en: "I want to go to {m}.", tags: ["place"] },
+            { jp: "{w}はどこにありますか？", en: "Where is the {m}?", tags: ["place", "object"] },
+            { jp: "{w}を<ruby>忘<rt>わす</rt></ruby>れないでください。", en: "Please do not forget {m}.", tags: ["abstract", "object", "activity"] },
+            { jp: "{w}を<ruby>探<rt>さが</rt></ruby>しています。", en: "I am looking for {m}.", tags: ["object", "person", "place"] },
+            { jp: "{w}が<ruby>好<rt>す</rt></ruby>きです。", en: "I like {m}.", tags: ["general"] }
         ];
 
         function changeLevel(level) {
@@ -330,7 +338,14 @@
             document.getElementById('flashcard').classList.remove('is-flipped');
             document.getElementById('k-meaning').style.display = 'none';
             document.getElementById('k-sentence').classList.remove('show-furigana');
-            const pattern = grammars[Math.floor(Math.random()*grammars.length)];
+                        const eng = it.english.toLowerCase();
+            let tags = ["general"];
+            if (eng.includes("place") || eng.includes("room") || eng.includes("city") || eng.includes("town") || eng.includes("hospital") || eng.includes("school")) tags.push("place");
+            if (eng.includes("to ") || eng.includes("ing ")) tags.push("activity", "verb");
+            if (eng.includes("book") || eng.includes("tool") || eng.includes("car") || eng.includes("phone") || eng.includes("food")) tags.push("object");
+            
+            const validPatterns = grammars.filter(p => p.tags.some(t => tags.includes(t)));
+            const pattern = validPatterns[Math.floor(Math.random() * validPatterns.length)];
             document.getElementById('k-sentence').innerHTML = pattern.jp.replace('{w}', `<ruby>${kanji}<rt>${it.kana}</rt></ruby>`);
             document.getElementById('k-meaning').innerText = pattern.en.replace('{m}', it.english);
             const keyword = encodeURIComponent(it.english.split(',')[0].trim());
@@ -387,7 +402,14 @@
             const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
             words.forEach((w, i) => {
                 const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";
-                const pattern = grammars[Math.floor(Math.random()*grammars.length)];
+                            const eng = it.english.toLowerCase();
+            let tags = ["general"];
+            if (eng.includes("place") || eng.includes("room") || eng.includes("city") || eng.includes("town") || eng.includes("hospital") || eng.includes("school")) tags.push("place");
+            if (eng.includes("to ") || eng.includes("ing ")) tags.push("activity", "verb");
+            if (eng.includes("book") || eng.includes("tool") || eng.includes("car") || eng.includes("phone") || eng.includes("food")) tags.push("object");
+            
+            const validPatterns = grammars.filter(p => p.tags.some(t => tags.includes(t)));
+            const pattern = validPatterns[Math.floor(Math.random() * validPatterns.length)];
                 const segmentHtml = conn + pattern.jp.replace('{w}', `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
                 const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");
                 storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
@@ -452,6 +474,7 @@
     </script>
 </body>
 </html>
+
 
 
 
