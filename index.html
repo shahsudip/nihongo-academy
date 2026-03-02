@@ -249,25 +249,43 @@
             { jp: "{w}について教えてください。", en: "please tell me about {m}.", tags: ["noun", "abstract", "place"] }
         ];
 
-        function generateAISentence(it) {
+                function generateAISentence(it) {
             const eng = it.english.toLowerCase();
             const kana = it.kana;
-            let tags = ["general"];
-            if (eng.includes("place") || eng.includes("room") || eng.includes("city") || eng.includes("town") || eng.includes("building")) tags.push("place");
-            if (eng.startsWith("to ") || eng.includes("ing ") || kana.endsWith("る") || kana.endsWith("う") || kana.endsWith("す")) tags.push("activity", "verb");
-            if (eng.includes("book") || eng.includes("tool") || eng.includes("car") || eng.includes("phone") || eng.includes("food")) tags.push("object");
-            if (eng.includes("person") || eng.includes("man") || eng.includes("woman") || eng.includes("friend")) tags.push("person");
-            if (eng.includes("feeling") || eng.includes("mind") || eng.includes("idea") || eng.includes("society")) tags.push("abstract");
+            const level = it.level;
+            
+            // Get another random word from the SAME LEVEL to make the sentence more natural
+            const levelWords = allVocab.filter(v => v.level === level && v.kanji !== it.kanji && (v.kanji || v.kana));
+            const support = levelWords[Math.floor(Math.random() * levelWords.length)];
+            const sKanji = support.kanji || support.kana;
+            const sKana = support.kana;
+            const sEng = support.english.split(",")[0].toLowerCase();
 
-            const validOpeners = openers.filter(o => o.tags.some(t => tags.includes(t)));
-            const validClosers = closers.filter(c => c.tags.some(t => tags.includes(t)));
+            const complexTemplates = [
+                { jp: "{s}と{w}、どちらが<ruby>大切<rt>たいせつ</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？", en: "Between {sm} and {m}, which do you think is more important?", tags: ["noun", "abstract"] },
+                { jp: "<ruby>最近<rt>さいきん</rt></ruby>、{s}の{w}について<ruby>調<rt>しら</rt></ruby>べています。", en: "Recently, I am researching the {m} of {sm}.", tags: ["noun", "place"] },
+                { jp: "{s}を<ruby>使<rt>つか</rt></ruby>って、{w}を<ruby>練習<rt>れんしゅう</rt></ruby>しましょう。", en: "Let`s use {sm} to practice {m}.", tags: ["activity", "object"] },
+                { jp: "この{w}は、{s}と<ruby>関係<rt>かんけい</rt></ruby>があるかもしれません。", en: "This {m} might be related to {sm}.", tags: ["abstract", "noun"] },
+                { jp: "{s}に<ruby>行<rt>い</rt></ruby>くときは、{w}を<ruby>忘<rt>わす</rt></ruby>れないでください。", en: "When going to {sm}, please don`t forget the {m}.", tags: ["place", "object"] },
+                { jp: "{s}の<ruby>中<rt>なか</rt></ruby>で、{w}を<ruby>見<rt>み</rt></ruby>つけました。", en: "I found {m} inside the {sm}.", tags: ["place", "object"] },
+                { jp: "「{w}」と「{s}」は、どちらも<ruby>有名<rt>ゆうめい</rt></ruby>です。", en: "Both \"{m}\" and \"{sm}\" are famous.", tags: ["general"] },
+                { jp: "{s}について{w}に<ruby>相談<rt>そうだん</rt></ruby>したいです。", en: "I want to consult about {sm} regarding {m}.", tags: ["abstract", "activity"] }
+            ];
+
+            let tags = ["general"];
+            if (eng.includes("place") || eng.includes("room") || eng.includes("city")) tags.push("place");
+            if (eng.startsWith("to ") || eng.includes("ing ") || kana.endsWith("る")) tags.push("activity");
+            if (eng.includes("book") || eng.includes("tool") || eng.includes("car")) tags.push("object");
             
-            const o = validOpeners[Math.floor(Math.random() * validOpeners.length)];
-            const c = validClosers[Math.floor(Math.random() * validClosers.length)];
-            
+            const valid = complexTemplates.filter(t => t.tags.some(tag => tags.includes(tag)));
+            const template = valid.length > 0 ? valid[Math.floor(Math.random() * valid.length)] : complexTemplates[6];
+
+            const targetHtml = `<ruby>${it.kanji || it.kana}<rt>${it.kana}</rt></ruby>`;
+            const supportHtml = `<ruby>${sKanji}<rt>${sKana}</rt></ruby>`;
+
             return {
-                jp: o.jp + c.jp,
-                en: o.en + c.en
+                jp: template.jp.replace("{w}", targetHtml).replace("{s}", supportHtml),
+                en: template.en.replace("{m}", it.english).replace("{sm}", sEng)
             };
         }
 
@@ -458,14 +476,25 @@
             }
         };
 
-        function initReading() {
+                function initReading() {
             if (!lessons[curLesson]) return; const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
             let storyHtml = "", translation = "";
             const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
             words.forEach((w, i) => {
                 const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";        
-                const pattern = getBestPattern(w);
-                const segmentHtml = conn + pattern.jp.replace("{w}", `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
+                const pattern = Math.random() > 0.4 ? generateAISentence(w) : getBestPattern(w);
+                const segmentHtml = conn + (pattern.jp.includes("{w}") ? pattern.jp.replace("{w}", `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`) : pattern.jp);
+                const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");    
+                storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
+                translation += conn + (pattern.en.includes("{m}") ? pattern.en.replace("{m}", w.english) : pattern.en) + " ";
+            });
+            document.getElementById("r-content").innerHTML = storyHtml;
+            document.getElementById("r-translation").innerText = translation;
+            document.getElementById("rq-options").innerHTML = "";
+            const q = document.createElement("button"); q.className="option-btn"; q.innerText="Check Content";
+            q.onclick=()=>document.getElementById("r-content").classList.add("show-furigana");
+            document.getElementById("rq-options").appendChild(q);
+        }", `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
                 const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");    
                 storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
                 translation += conn + pattern.en.replace("{m}", w.english) + " ";
@@ -549,6 +578,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
