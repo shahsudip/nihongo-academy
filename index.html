@@ -10908,15 +10908,36 @@
         let mastered = new Set(JSON.parse(localStorage.getItem('n3_mastered') || '[]'));
         let qIdx = 0, qScore = 0, qList = [];
 
-        const grammars = [
-            { jp: '{w}を<ruby>知<rt>し</rt></ruby>っていますか？', en: 'Do you know about {m}?' },
-            { jp: '{w}を<ruby>見<rt>み</rt></ruby>たことが、あります。', en: 'I have seen {m} before.' },
-            { jp: '{w}はとても<ruby>大切<rt>たいせつ</rt></ruby>かもしれません。', en: '{m} might be very important.' },
-            { jp: '{w}について<ruby>教<rt>おし</rt></ruby>えてください。', en: 'Please tell me about {m}.' },
-            { jp: '<ruby>最近<rt>さいきん</rt></ruby>、{w}に<ruby>興味<rt>きょうみ</rt></ruby>があります。', en: 'Recently, I am interested in {m}.' },
-            { jp: '{w}を<ruby>練習<rt>れんしゅう</rt></ruby>しなければなりません。', en: 'I must practice {m}.' },
-            { jp: '{w}は<ruby>簡単<rt>かんたん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>われています。', en: 'It is thought that {m} is easy.' }
-        ];
+                const n3GrammarLibrary = {
+            verb: [
+                { jp: "{w}ことに<ruby>興味<rt>きょうみ</rt></ruby>がありますが、なかなか<ruby>上手<rt>じょうず</rt></ruby>になりません。", en: "I am interested in {m}, but I don`t get better at it easily." },
+                { jp: "<ruby>健康<rt>けんこう</rt></ruby>のために、<ruby>毎日<rt>まいにち</rt></ruby>{w}ようにしています。", en: "I try to {m} every day for my health." },
+                { jp: "{w}ことができれば、もっと<ruby>楽<rt>たの</rt></ruby>しくなると<ruby>思<rt>おも</rt></ruby>います。", en: "I think it would be more fun if I could {m}." },
+                { jp: "<ruby>昨日<rt>きのう</rt></ruby>から{w}のを<ruby>続<rt>つづ</rt></ruby>けていますが、かなり<ruby>大変<rt>たいへん</rt></ruby>です。", en: "I have been continuing {m} since yesterday, and it is quite difficult." },
+                { jp: "もっと{w}ほうがいいと、<ruby>先生<rt>せんせい</rt></ruby>に<ruby>言<rt>い</rt></ruby>われました。", en: "The teacher told me that it is better to {m} more." }
+            ],
+            noun: [
+                { jp: "この{w}については、まだ<ruby>誰<rt>だれ</rt></ruby>も<ruby>知<rt>し</rt></ruby>らないようです。", en: "It seems no one knows about this {m} yet." },
+                { jp: "あの{w}は、とても<ruby>有名<rt>ゆうめい</rt></ruby>だということをご<ruby>存知<rt>ぞんじ</rt></ruby>ですか？", en: "Did you know that that {m} is very famous?" },
+                { jp: "{w}のおかげで、<ruby>生活<rt>せいかつ</rt></ruby>がとても<ruby>便利<rt>べんり</rt></ruby>になりました。", en: "Thanks to {m}, life has become very convenient." },
+                { jp: "{w}というものは、<ruby>人間<rt>にんげん</rt></ruby>にとって<ruby>大切<rt>たいせつ</rt></ruby>なものです。", en: "Something called {m} is important for human beings." },
+                { jp: "あそこにいる{w}は、わたしの<ruby>友人<rt>ゆうじん</rt></ruby>かもしれません。", en: "The {m} over there might be my friend." }
+            ],
+            adjective: [
+                { jp: "その{w}ニュースを<ruby>聞<rt>き</rt></ruby>いて、とても<ruby>驚<rt>おどろ</rt></ruby>きました。", en: "I was very surprised to hear that {m} news." },
+                { jp: "もっと{w}ように、しっかり<ruby>準備<rt>じゅんび</rt></ruby>しなければなりません。", en: "I must prepare well so that it becomes more {m}." },
+                { jp: "{w}かどうか、あとで<ruby>確認<rt>かくにん</rt></ruby>してみるつもりです。", en: "I will try to check later whether it is {m} or not." },
+                { jp: "そんなに{w}なら、もっと<ruby>早<rt>はや</rt></ruby>く<ruby>教<rt>おし</rt></ruby>えてほしかったです。", en: "If it is that {m}, I wanted you to tell me sooner." }
+            ]
+        };
+
+        function getWordType(it) {
+            const eng = it.english.toLowerCase();
+            const kana = it.kana;
+            if (eng.startsWith("to ") || eng.includes("ing ") || kana.endsWith("る") || kana.endsWith("う") || kana.endsWith("す") || kana.endsWith("く") || kana.endsWith("む") || kana.endsWith("つ")) return "verb";
+            if (kana.endsWith("い") || eng.includes("ly ") || eng.endsWith("ful") || eng.endsWith("ous")) return "adjective";
+            return "noun";
+        }
 
         function categorize() {
             const cats = {
@@ -11163,6 +11184,7 @@
     </script>
 </body>
 </html>
+
 
 
 
