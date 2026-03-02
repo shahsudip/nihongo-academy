@@ -11078,27 +11078,27 @@
             }
         }
 
-        function initReading() {
+                function initReading() {
             const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
-            let storyHtml = "", translation = "";
+            let story = "", translation = "";
             const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
             words.forEach((w, i) => {
-                const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";
-                const pattern = grammars[Math.floor(Math.random()*grammars.length)];
-                const segmentHtml = conn + pattern.jp.replace('{w}', `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
-                const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");
-                storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
-                translation += conn + pattern.en.replace('{m}', w.english) + " ";
+                const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";        
+                const type = getWordType(w);
+                const patterns = n3GrammarLibrary[type] || n3GrammarLibrary.noun;
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                story += conn + pattern.jp.replace("{w}", `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`) + " ";
+                translation += conn + pattern.en.replace("{m}", w.english) + " ";
             });
-            document.getElementById('r-content').innerHTML = storyHtml;
-            document.getElementById('r-translation').innerText = translation;
-            document.getElementById('r-translation').classList.remove('expanded');
+            document.getElementById("r-content").innerHTML = story;
+            document.getElementById("r-translation").innerText = translation;
+            document.getElementById("r-translation").classList.remove("expanded");
             const qSet = [{ q: "<ruby>文章<rt>ぶんしょう</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby>について、正しいものはどれですか？", a: ["環境の話", "日常の生活", "新しいこと", "家族のこと"] }];
-            document.getElementById('rq-text').innerHTML = qSet[0].q;
-            const optArea = document.getElementById('rq-options'); optArea.innerHTML = "";
+            document.getElementById("rq-text").innerHTML = qSet[0].q;
+            const optArea = document.getElementById("rq-options"); optArea.innerHTML = "";
             qSet[0].a.forEach(opt => {
-                const b = document.createElement('button'); b.className = "option-btn"; b.innerText = opt;
-                b.onclick = () => { b.classList.add('correct'); document.getElementById('r-content').classList.add('show-furigana'); };
+                const b = document.createElement("button"); b.className = "option-btn"; b.innerText = opt;
+                b.onclick = () => { b.classList.add("correct"); document.getElementById("r-content").classList.add("show-furigana"); };
                 optArea.appendChild(b);
             });
         }
@@ -11184,6 +11184,7 @@
     </script>
 </body>
 </html>
+
 
 
 
