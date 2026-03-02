@@ -11005,7 +11005,8 @@
             }
         }
 
-        function initKanji() {
+                function initKanji() {
+            if (!lessons[curLesson]) return;
             kQueue = lessons[curLesson].filter(it => !mastered.has(it.id));
             if (kQueue.length === 0) kQueue = [...lessons[curLesson]];
             shuffle(kQueue); kIdx = 0; updateK();
@@ -11025,7 +11026,7 @@
             document.getElementById('k-meaning').style.display = 'none';
             document.getElementById('k-sentence').classList.remove('show-furigana');
             
-            const pattern = grammars[Math.floor(Math.random()*grammars.length)];
+            const type = getWordType(it); const patterns = n3GrammarLibrary[type] || n3GrammarLibrary.noun; const pattern = patterns[Math.floor(Math.random() * patterns.length)];
             document.getElementById('k-sentence').innerHTML = pattern.jp.replace('{w}', `<ruby>${kanji}<rt>${it.kana}</rt></ruby>`);
             document.getElementById('k-meaning').innerText = pattern.en.replace('{m}', it.english);
             
@@ -11180,10 +11181,12 @@
         function speakReading() { speakText(document.getElementById('r-content').innerHTML); }
         function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} }
         
-        window.onload = () => { categorize(); switchMode("Environment", "kanji"); };
+        window.onload = () => { categorize(); const firstLesson = Object.keys(lessons)[0] || "Environment"; switchMode(firstLesson, "kanji"); };
     </script>
 </body>
 </html>
+
+
 
 
 
