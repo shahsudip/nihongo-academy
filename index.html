@@ -96,8 +96,13 @@
             .sidebar-overlay.show { display: block; }
             .card-face { padding: 20px; border-radius: 20px; }
             .story-text { font-size: 1.15rem; padding: 15px; line-height: 2; }
-        }
+            }
 
+            .story-segment { color: #cbd5e1; transition: color 0.3s; }
+            .story-segment.active { color: #1e293b; font-weight: bold; }
+            .story-segment.done { color: #1e293b; }
+            .speaking-active { background: #fee2e2 !important; border-color: #ef4444 !important; color: #ef4444 !important; }
+            </style>
         @media (max-width: 480px) {
             .flashcard-scene { height: 400px; }
             .kanji-main { font-size: 3.2rem; }
@@ -164,6 +169,7 @@
                     <button class="eye-btn" onclick="toggleRFurigana()"><i class="fas fa-language"></i> Furigana</button>
                     <button class="eye-btn" onclick="toggleRMeaning()"><i class="fas fa-eye"></i> English</button>
                     <button class="eye-btn" onclick="speakReading()"><i class="fas fa-volume-up"></i> Listen</button>
+                    <button class="eye-btn" id="speak-btn" onclick="startSpeaking()"><i class="fas fa-microphone"></i> Speak</button>
                 </div>
                 <div id="r-content" class="story-text"></div>
                 <div id="r-translation" class="story-translation"></div>
@@ -11052,15 +11058,17 @@
 
         function initReading() {
             const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
-            let story = "", translation = "";
+            let storyHtml = "", translation = "";
             const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
             words.forEach((w, i) => {
                 const conn = i > 0 ? connectors[Math.floor(Math.random()*connectors.length)] : "";
                 const pattern = grammars[Math.floor(Math.random()*grammars.length)];
-                story += conn + pattern.jp.replace('{w}', `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`) + " ";
+                const segmentHtml = conn + pattern.jp.replace('{w}', `<ruby>${w.kanji || w.kana}<rt>${w.kana}</rt></ruby>`);
+                const segmentText = segmentHtml.replace(/<rt>.*?<\/rt>/g, "").replace(/<[^>]*>/g, "");
+                storyHtml += `<span class="story-segment" data-text="${segmentText}">${segmentHtml}</span> `;
                 translation += conn + pattern.en.replace('{m}', w.english) + " ";
             });
-            document.getElementById('r-content').innerHTML = story;
+            document.getElementById('r-content').innerHTML = storyHtml;
             document.getElementById('r-translation').innerText = translation;
             document.getElementById('r-translation').classList.remove('expanded');
             const qSet = [{ q: "<ruby>文章<rt>ぶんしょう</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby>について、正しいものはどれですか？", a: ["環境の話", "日常の生活", "新しいこと", "家族のこと"] }];
@@ -11091,6 +11099,58 @@
                 b.onclick = () => { if (opt === correct) { b.classList.add('correct'); qScore++; } else b.classList.add('wrong'); setTimeout(() => { qIdx++; startQuiz(); }, 600); };
                 optArea.appendChild(b);
             });
+        }
+
+        let recognition = null;
+        let speakingIdx = 0;
+        function startSpeaking() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Speech recognition not supported in this browser. Please use Chrome or Edge.");
+                return;
+            }
+            const btn = document.getElementById('speak-btn');
+            if (recognition) { recognition.stop(); return; }
+
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRec();
+            recognition.lang = 'ja-JP';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            const segments = document.querySelectorAll('.story-segment');
+            speakingIdx = 0;
+            segments.forEach(s => { s.classList.remove('done', 'active'); });
+            if (segments[0]) segments[0].classList.add('active');
+
+            btn.classList.add('speaking-active');
+            btn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+
+            recognition.onresult = (event) => {
+                let transcript = "";
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    transcript += event.results[i][0].transcript;
+                }
+                const cleanTranscript = transcript.replace(/[、。！？\s]/g, "");
+                while (speakingIdx < segments.length) {
+                    const target = segments[speakingIdx].getAttribute('data-text').replace(/[、。！？\s]/g, "");
+                    if (cleanTranscript.includes(target)) {
+                        segments[speakingIdx].classList.remove('active');
+                        segments[speakingIdx].classList.add('done');
+                        speakingIdx++;
+                        if (speakingIdx < segments.length) segments[speakingIdx].classList.add('active');
+                    } else break;
+                }
+            };
+
+            recognition.onend = () => {
+                recognition = null;
+                btn.classList.remove('speaking-active');
+                btn.innerHTML = '<i class="fas fa-microphone"></i> Speak';
+                segments.forEach(s => s.classList.remove('active'));
+            };
+
+            recognition.onerror = () => { recognition.stop(); };
+            recognition.start();
         }
 
         function speakText(t) { const u = new SpeechSynthesisUtterance(t.replace(/<rt>.*?<\/rt>/g, "").replace(/<ruby>|<\/ruby>/g, "")); u.lang = 'ja-JP'; window.speechSynthesis.speak(u); }
