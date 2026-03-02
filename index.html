@@ -11063,7 +11063,7 @@
             }
         };
 
-                                async function renderStrokes(text, id) {
+                                        async function renderStrokes(text, id) {
             const container = document.getElementById("s-container"); 
             container.innerHTML = "";
             if (!text) return;
@@ -11106,44 +11106,6 @@
             for (let w of writers) {
                 if (id !== animId) return;
                 try {
-                    await w.animateCharacter();
-                } catch(e) { console.warn("Stroke animation failed", e); }
-            }
-        }-${id}`; 
-                d.style.width = "100px";
-                d.style.height = "100px";
-                d.style.display = "flex";
-                d.style.alignItems = "center";
-                d.style.justifyContent = "center";
-                d.style.fontSize = "3.5rem";
-                d.style.color = "#1e293b";
-                container.appendChild(d);
-                
-                if (char.match(/[\u3400-\u9fff]/)) {
-                    const w = HanziWriter.create(d.id, char, {
-                        width: 100, height: 100, padding: 5,
-                        strokeAnimationSpeed: 1.5,
-                        showCharacter: false,
-                        charDataLoader: (c, cb) => {
-                            fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${c}.json`)
-                                .then(r => r.ok ? r.json() : Promise.reject())
-                                .then(data => cb(data))
-                                .catch(() => {
-                                    d.innerText = char; 
-                                    cb(null);
-                                });
-                        }
-                    });
-                    writers.push(w);
-                } else {
-                    d.innerText = char; 
-                }
-            }
-            
-            for (let w of writers) {
-                if (id !== animId) return;
-                try {
-                    await w.showCharacter(); 
                     await w.animateCharacter();
                 } catch(e) { console.warn("Stroke animation failed", e); }
             }
@@ -11261,4 +11223,5 @@
     </script>
 </body>
 </html>
+
 
