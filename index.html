@@ -11181,10 +11181,12 @@
         function speakReading() { speakText(document.getElementById('r-content').innerHTML); }
         function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} }
         
-        window.onload = () => { categorize(); const firstLesson = Object.keys(lessons)[0] || "Environment"; switchMode(firstLesson, "kanji"); };
+        window.onload = () => { console.log('Starting app...'); try { categorize(); console.log('Categorized'); const keys = Object.keys(lessons); console.log('Lessons:', keys); const firstLesson = keys[0] || 'Environment'; switchMode(firstLesson, 'kanji'); console.log('Switched mode'); } catch(e) { console.error('Error during init:', e); } };
     </script>
 </body>
 </html>
+
+
 
 
 
