@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -121,15 +121,23 @@
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <span><i class="fas fa-university"></i> N3 Mastery</span>
+            <span><i class="fas fa-university"></i> Nihongo Academy</span>
             <button class="menu-btn" onclick="toggleSidebar()" style="font-size: 1.2rem; display: none;" id="close-sidebar-btn"><i class="fas fa-times"></i></button>
         </div>
+        <div id="level-display" style="padding: 0 20px; font-size: 0.9rem; color: #64748b; margin-top: 5px;"></div>
+        <select class="level-selector" id="level-selector" onchange="changeLevel(this.value)">
+            <option value="N5">N5 Mastery</option>
+            <option value="N4">N4 Mastery</option>
+            <option value="N3" selected>N3 Mastery</option>
+            <option value="N2">N2 Mastery</option>
+            <option value="N1">N1 Mastery</option>
+        </select>
         <div id="lesson-nav"></div>
     </aside>
 
     <div class="mobile-header">
         <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-        <div id="mobile-level-display" style="font-weight: bold; color: var(--primary);">N3 Mastery</div>
+        <div id="mobile-level-display" style="font-weight: bold; color: var(--primary);">Nihongo Academy</div>
         <div style="width: 30px;"></div>
     </div>
 
@@ -227,7 +235,7 @@
             if (disp) disp.innerHTML = `<i class="fas fa-university"></i> ${level} Mastery`;
             if (mDisp) mDisp.innerText = `${level} Mastery`;
             
-            mastered = new Set(JSON.parse(localStorage.getItem(`mastered_${curLevel}`) || '[]'));
+            try { mastered = new Set(JSON.parse(localStorage.getItem(`mastered_${curLevel}`) || "[]")); } catch(e) { mastered = new Set(); }
             categorize();
             const firstLesson = Object.keys(lessons)[0];
             switchMode(firstLesson, "kanji");
@@ -270,7 +278,7 @@
                 const group = document.createElement('div'); group.className = "lesson-group";
                 group.innerHTML = `<div class="lesson-title">${name}</div>`;
                 ["kanji", "reading", "quiz"].forEach(m => {
-                    const btn = document.createElement('div'); btn.className = `nav-item ${curLesson === name && curMode === m ? 'active' : '}`;
+                    const btn = document.createElement('div'); btn.className = `nav-item ${curLesson === name && curMode === m ? 'active' : ''}`;
                     const icons = { kanji: 'clone', reading: 'book-open', quiz: 'tasks' };
                     btn.innerHTML = `<i class="fas fa-${icons[m]}"></i> ${m.charAt(0).toUpperCase() + m.slice(1)}`;
                     btn.onclick = () => switchMode(name, m); group.appendChild(btn);
@@ -374,7 +382,7 @@
         }
 
         function initReading() {
-            const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
+            if (!lessons[curLesson]) return; const words = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 15);
             let storyHtml = "", translation = "";
             const connectors = ["そして、", "しかし、", "また、", "ところで、", "さらに、", "その<ruby>後<rt>あと</rt></ruby>で、"];
             words.forEach((w, i) => {
@@ -395,7 +403,7 @@
         function toggleRFurigana() { document.getElementById('r-content').classList.toggle('show-furigana'); }
         function toggleRMeaning() { document.getElementById('r-translation').classList.toggle('expanded'); }
 
-        function initQuiz() { qList = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 10); qIdx = 0; qScore = 0; startQuiz(); }
+        function initQuiz() { if (!lessons[curLesson]) return; qList = [...lessons[curLesson]].sort(()=>0.5-Math.random()).slice(0, 10); qIdx = 0; qScore = 0; startQuiz(); }
         function startQuiz() {
             if (qIdx >= qList.length) { document.getElementById('q-area').style.display = 'none'; document.getElementById('q-result').style.display = 'block'; document.getElementById('q-score-text').innerText = `Your Score: ${qScore}/10`; return; }
             document.getElementById('q-area').style.display = 'block'; document.getElementById('q-result').style.display = 'none';
@@ -444,6 +452,7 @@
     </script>
 </body>
 </html>
+
 
 
 
